@@ -1,33 +1,38 @@
 {
-  "name": "saas-starter",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+  \"name\": \"saas-starter\",
+  \"version\": \"0.1.0\",
+  \"private\": true,
+  \"scripts\": {
+    \"dev\": \"next dev --turbopack\",
+    \"build\": \"next build\",
+    \"start\": \"next start\",
+    \"lint\": \"next lint\",
+    \"prisma:generate\": \"prisma generate\",
+    \"prisma:db-push\": \"prisma db push\",
+    \"prisma:migrate\": \"prisma migrate dev\"
   },
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^7.0.0",
-    "@fortawesome/free-brands-svg-icons": "^7.0.0",
-    "@fortawesome/free-regular-svg-icons": "^7.0.0",
-    "@fortawesome/free-solid-svg-icons": "^7.0.0",
-    "@fortawesome/react-fontawesome": "^0.2.3",
-    "next": "15.4.6",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+  \"dependencies\": {
+    \"@fortawesome/fontawesome-svg-core\": \"^7.2.0\",
+    \"@fortawesome/free-brands-svg-icons\": \"^7.2.0\",
+    \"@fortawesome/free-regular-svg-icons\": \"^7.2.0\",
+    \"@fortawesome/free-solid-svg-icons\": \"^7.2.0\",
+    \"@fortawesome/react-fontawesome\": \"^3.2.0\",
+    \"@prisma/client\": \"^5.20.0\",
+    \"next\": \"16.1.6\",
+    \"react\": \"19.2.4\",
+    \"react-dom\": \"19.2.4\"
   },
-  "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "daisyui": "^5.0.50",
-    "eslint": "^9",
-    "eslint-config-next": "15.4.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+  \"devDependencies\": {
+    \"@eslint/eslintrc\": \"^3\",
+    \"@tailwindcss/postcss\": \"^4\",
+    \"@types/node\": \"^25\",
+    \"@types/react\": \"^19\",
+    \"@types/react-dom\": \"^19\",
+    \"daisyui\": \"^5.5.19\",
+    \"eslint\": \"^10\",
+    \"eslint-config-next\": \"16.1.6\",
+    \"prisma\": \"^5.20.0\",
+    \"tailwindcss\": \"^4\",
+    \"typescript\": \"^5\"
   }
 }
