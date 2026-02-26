@@ -3,8 +3,8 @@
  * Includes a simple navbar and footer.
  */
 
-import Link from "next/link"
 import type { ReactNode } from "react"
+import { ButtonLink, TextLink } from "@/components/ui"
 import { ThemeToggle } from "@/components/layout/ThemeToggle"
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
@@ -16,20 +16,20 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 			<div className="sticky top-0 z-50 bg-base-100/80 backdrop-blur-md border-b border-base-200">
 				<div className="navbar container mx-auto px-4">
 					<div className="flex-1">
-						<Link href="/" className="btn btn-ghost text-xl font-bold tracking-tight">
+						<ButtonLink href="/" variant="ghost" className="text-xl font-bold tracking-tight">
 							{appName}
-						</Link>
+						</ButtonLink>
 					</div>
 					<div className="flex-none gap-2">
-						<Link href="/blog" className="btn btn-ghost btn-sm">
+						<ButtonLink href="/blog" variant="ghost" size="sm">
 							Blog
-						</Link>
-						<Link href="/contact" className="btn btn-ghost btn-sm">
+						</ButtonLink>
+						<ButtonLink href="/contact" variant="ghost" size="sm">
 							Contact
-						</Link>
-						<Link href="/login" className="btn btn-primary btn-sm">
+						</ButtonLink>
+						<ButtonLink href="/login" variant="primary" size="sm">
 							Sign In
-						</Link>
+						</ButtonLink>
 					</div>
 				</div>
 			</div>
@@ -41,24 +41,24 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 			<footer className="footer footer-center bg-base-300 text-base-content p-10">
 				<ThemeToggle />
 				<nav className="flex flex-wrap gap-4">
-					<Link href="/legal" className="link link-hover">
+					<TextLink href="/legal" variant="hover">
 						Legal
-					</Link>
-					<Link href="/privacy" className="link link-hover">
+					</TextLink>
+					<TextLink href="/privacy" variant="hover">
 						Privacy Policy
-					</Link>
-					<Link href="/terms" className="link link-hover">
+					</TextLink>
+					<TextLink href="/terms" variant="hover">
 						Terms of Service
-					</Link>
-					<Link href="/cookies" className="link link-hover">
+					</TextLink>
+					<TextLink href="/cookies" variant="hover">
 						Cookie Policy
-					</Link>
-					<Link href="/gdpr" className="link link-hover">
+					</TextLink>
+					<TextLink href="/gdpr" variant="hover">
 						GDPR
-					</Link>
-					<Link href="/contact" className="link link-hover">
+					</TextLink>
+					<TextLink href="/contact" variant="hover">
 						Contact
-					</Link>
+					</TextLink>
 				</nav>
 				<aside>
 					<p>

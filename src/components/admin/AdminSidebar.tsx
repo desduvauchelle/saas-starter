@@ -11,6 +11,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { UserRole } from "@prisma/client"
 import type { NavSection } from "@/lib/admin/navigation"
+import { Button } from "@/components/ui"
 
 interface AdminSidebarProps {
 	navigation: NavSection[]
@@ -47,16 +48,18 @@ export function AdminSidebar({
 					</Link>
 				)}
 				<div className={`flex ${collapsed ? "w-full justify-center" : "hidden lg:flex"}`}>
-					<button
+					<Button
+						variant="ghost"
+						size="sm"
+						modifier="square"
 						onClick={onToggleCollapse}
-						className="btn btn-ghost btn-sm btn-square"
 						aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
 					>
 						<i
 							className={`fa-solid ${collapsed ? "fa-bars" : "fa-outdent text-base-content/50"
 								}`}
 						/>
-					</button>
+					</Button>
 				</div>
 			</div>
 

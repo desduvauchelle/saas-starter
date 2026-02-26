@@ -7,6 +7,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { Button, ButtonLink, Input, Textarea, Select, Toggle } from "@/components/ui"
 import type { ProductType, SubscriptionTier, SubscriptionInterval } from "@prisma/client"
 
 export default function AdminNewProductPage() {
@@ -82,140 +83,36 @@ export default function AdminNewProductPage() {
 					)}
 
 					<form onSubmit={handleSubmit} className="space-y-4">
-						<div className="form-control">
-							<label className="label"><span className="label-text">Name *</span></label>
-							<input
-								type="text"
-								className="input input-bordered"
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-								required
-							/>
-						</div>
+						<Input label="Name *" type="text" value={name} onChange={(e) => setName(e.target.value)} required />
 
-						<div className="form-control">
-							<label className="label"><span className="label-text">Description</span></label>
-							<textarea
-								className="textarea textarea-bordered"
-								value={description}
-								onChange={(e) => setDescription(e.target.value)}
-								rows={2}
-							/>
-						</div>
+						<Textarea label="Description" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
 
 						<div className="grid grid-cols-2 gap-4">
-							<div className="form-control">
-								<label className="label"><span className="label-text">Price (USD) *</span></label>
-								<input
-									type="number"
-									step="0.01"
-									min="0"
-									className="input input-bordered"
-									value={price}
-									onChange={(e) => setPrice(e.target.value)}
-									required
-									placeholder="9.99"
-								/>
-							</div>
+							<Input label="Price (USD) *" type="number" step="0.01" min="0" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="9.99" />
 
-							<div className="form-control">
-								<label className="label"><span className="label-text">Currency</span></label>
-								<select
-									className="select select-bordered"
-									value={currency}
-									onChange={(e) => setCurrency(e.target.value)}
-								>
-									<option value="usd">USD</option>
-									<option value="eur">EUR</option>
-									<option value="gbp">GBP</option>
-								</select>
-							</div>
+							<Select label="Currency" value={currency} onChange={(e) => setCurrency(e.target.value)} options={[{label:"USD",value:"usd"},{label:"EUR",value:"eur"},{label:"GBP",value:"gbp"}]} />
 						</div>
 
-						<div className="form-control">
-							<label className="label"><span className="label-text">Type *</span></label>
-							<select
-								className="select select-bordered"
-								value={type}
-								onChange={(e) => setType(e.target.value as ProductType)}
-							>
-								<option value="SUBSCRIPTION">Subscription</option>
-								<option value="ONE_TIME">One-Time</option>
-							</select>
-						</div>
+						<Select label="Type *" value={type} onChange={(e) => setType(e.target.value as ProductType)} options={[{label:"Subscription",value:"SUBSCRIPTION"},{label:"One-Time",value:"ONE_TIME"}]} />
 
 						{type === "SUBSCRIPTION" && (
 							<div className="grid grid-cols-2 gap-4">
-								<div className="form-control">
-									<label className="label"><span className="label-text">Tier</span></label>
-									<select
-										className="select select-bordered"
-										value={tier}
-										onChange={(e) => setTier(e.target.value as SubscriptionTier | "")}
-									>
-										<option value="">None</option>
-										<option value="FREE">Free</option>
-										<option value="BASIC">Basic</option>
-										<option value="PRO">Pro</option>
-										<option value="ENTERPRISE">Enterprise</option>
-									</select>
-								</div>
+								<Select label="Tier" value={tier} onChange={(e) => setTier(e.target.value as SubscriptionTier | "")} options={[{label:"None",value:""},{label:"Free",value:"FREE"},{label:"Basic",value:"BASIC"},{label:"Pro",value:"PRO"},{label:"Enterprise",value:"ENTERPRISE"}]} />
 
-								<div className="form-control">
-									<label className="label"><span className="label-text">Interval</span></label>
-									<select
-										className="select select-bordered"
-										value={interval}
-										onChange={(e) => setInterval(e.target.value as SubscriptionInterval | "")}
-									>
-										<option value="">None</option>
-										<option value="MONTHLY">Monthly</option>
-										<option value="YEARLY">Yearly</option>
-										<option value="LIFETIME">Lifetime</option>
-									</select>
-								</div>
+								<Select label="Interval" value={interval} onChange={(e) => setInterval(e.target.value as SubscriptionInterval | "")} options={[{label:"None",value:""},{label:"Monthly",value:"MONTHLY"},{label:"Yearly",value:"YEARLY"},{label:"Lifetime",value:"LIFETIME"}]} />
 							</div>
 						)}
 
-						<div className="form-control">
-							<label className="label"><span className="label-text">Features (one per line)</span></label>
-							<textarea
-								className="textarea textarea-bordered"
-								value={features}
-								onChange={(e) => setFeatures(e.target.value)}
-								rows={4}
-								placeholder={"Feature 1\nFeature 2\nFeature 3"}
-							/>
-						</div>
+						<Textarea label="Features (one per line)" value={features} onChange={(e) => setFeatures(e.target.value)} rows={4} placeholder={"Feature 1\nFeature 2\nFeature 3"} />
 
 						<div className="flex gap-4">
-							<label className="label cursor-pointer gap-2">
-								<input
-									type="checkbox"
-									className="toggle toggle-accent"
-									checked={recommended}
-									onChange={(e) => setRecommended(e.target.checked)}
-								/>
-								<span className="label-text">Recommended</span>
-							</label>
-
-							<label className="label cursor-pointer gap-2">
-								<input
-									type="checkbox"
-									className="toggle toggle-success"
-									checked={isActive}
-									onChange={(e) => setIsActive(e.target.checked)}
-								/>
-								<span className="label-text">Active</span>
-							</label>
+							<Toggle label="Recommended" color="accent" checked={recommended} onChange={(e) => setRecommended(e.target.checked)} />
+							<Toggle label="Active" color="success" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} />
 						</div>
 
 						<div className="flex gap-2 pt-2">
-							<button type="submit" className="btn btn-primary" disabled={saving}>
-								{saving && <span className="loading loading-spinner loading-xs" />}
-								Create Product
-							</button>
-							<Link href="/admin/products" className="btn btn-ghost">Cancel</Link>
+							<Button type="submit" variant="primary" loading={saving}>Create Product</Button>
+							<ButtonLink href="/admin/products" variant="ghost">Cancel</ButtonLink>
 						</div>
 					</form>
 				</div>

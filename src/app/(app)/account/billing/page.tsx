@@ -5,7 +5,7 @@
 import { auth } from "@/lib/auth/config"
 import { redirect } from "next/navigation"
 import prisma from "@/lib/prisma"
-import Link from "next/link"
+import { Button, ButtonLink } from "@/components/ui"
 
 export const metadata = {
 	title: "Billing",
@@ -53,9 +53,9 @@ export default async function BillingPage() {
 
 							{process.env.STRIPE_SECRET_KEY && (
 								<form action="/api/billing/portal" method="POST">
-									<button type="submit" className="btn btn-outline btn-sm mt-2">
+									<Button type="submit" size="sm" outline className="mt-2">
 										Manage Subscription
-									</button>
+									</Button>
 								</form>
 							)}
 						</div>
@@ -64,9 +64,9 @@ export default async function BillingPage() {
 							<p className="text-base-content/70 mb-4">
 								You are currently on the Free plan.
 							</p>
-							<Link href="/#pricing" className="btn btn-primary btn-sm">
+							<ButtonLink href="/#pricing" variant="primary" size="sm">
 								Upgrade
-							</Link>
+							</ButtonLink>
 						</div>
 					)}
 				</div>

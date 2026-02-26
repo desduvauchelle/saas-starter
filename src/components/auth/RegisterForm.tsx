@@ -10,9 +10,9 @@
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import type { AuthConfig } from "@/types/auth"
 import type { ApiResponse } from "@/types/api"
+import { Button, Input, TextLink } from "@/components/ui"
 import { OAuthButtons } from "./OAuthButtons"
 
 interface RegisterFormProps {
@@ -86,89 +86,69 @@ export function RegisterForm({ authConfig }: RegisterFormProps) {
 				)}
 
 				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className="form-control">
-						<label className="label" htmlFor="register-name">
-							<span className="label-text">Name</span>
-						</label>
-						<input
-							id="register-name"
-							type="text"
-							placeholder="Your name"
-							className="input input-bordered w-full"
-							value={name}
-							onChange={(e) => setName(e.target.value)}
-							required
-							autoComplete="name"
-						/>
-					</div>
+					<Input
+						id="register-name"
+						label="Name"
+						type="text"
+						placeholder="Your name"
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						required
+						autoComplete="name"
+					/>
 
-					<div className="form-control">
-						<label className="label" htmlFor="register-email">
-							<span className="label-text">Email</span>
-						</label>
-						<input
-							id="register-email"
-							type="email"
-							placeholder="you@example.com"
-							className="input input-bordered w-full"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-							required
-							autoComplete="email"
-						/>
-					</div>
+					<Input
+						id="register-email"
+						label="Email"
+						type="email"
+						placeholder="you@example.com"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						required
+						autoComplete="email"
+					/>
 
-					<div className="form-control">
-						<label className="label" htmlFor="register-password">
-							<span className="label-text">Password</span>
-						</label>
-						<input
-							id="register-password"
-							type="password"
-							placeholder="••••••••"
-							className="input input-bordered w-full"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							required
-							minLength={8}
-							autoComplete="new-password"
-						/>
-					</div>
+					<Input
+						id="register-password"
+						label="Password"
+						type="password"
+						placeholder="••••••••"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+						minLength={8}
+						autoComplete="new-password"
+					/>
 
-					<div className="form-control">
-						<label className="label" htmlFor="register-confirm">
-							<span className="label-text">Confirm Password</span>
-						</label>
-						<input
-							id="register-confirm"
-							type="password"
-							placeholder="••••••••"
-							className="input input-bordered w-full"
-							value={confirmPassword}
-							onChange={(e) => setConfirmPassword(e.target.value)}
-							required
-							minLength={8}
-							autoComplete="new-password"
-						/>
-					</div>
+					<Input
+						id="register-confirm"
+						label="Confirm Password"
+						type="password"
+						placeholder="••••••••"
+						value={confirmPassword}
+						onChange={(e) => setConfirmPassword(e.target.value)}
+						required
+						minLength={8}
+						autoComplete="new-password"
+					/>
 
-					<button
+					<Button
 						type="submit"
-						className="btn btn-primary w-full"
-						disabled={loading}
+						variant="primary"
+						className="w-full"
+						loading={loading}
 					>
-						{loading && <span className="loading loading-spinner loading-sm" />}
 						Create Account
-					</button>
+					</Button>
 				</form>
 
 				<OAuthButtons providers={authConfig.providers} />
 
 				<p className="text-center text-sm mt-4">
 					Already have an account?{" "}
-					<Link href="/login" className="link link-primary">
+					<TextLink href="/login" variant="primary">
 						Sign in
-					</Link>
+					</TextLink>
 				</p>
 			</div>
 		</div>

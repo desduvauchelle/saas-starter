@@ -6,6 +6,7 @@
  */
 
 import Link from "next/link"
+import { ButtonLink } from "@/components/ui"
 import prisma from "@/lib/prisma"
 import type { Metadata } from "next"
 
@@ -19,6 +20,7 @@ interface BlogPageProps {
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
+	const appName = process.env.NEXT_PUBLIC_APP_NAME ?? "SaaS Starter"
 	const params = await searchParams
 	const page = Math.max(1, parseInt(params.page ?? "1", 10))
 	const perPage = 12
@@ -74,7 +76,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 							{posts.map((post) => (
 								<Link
 									key={post.id}
-									href={`/blog/${post.slug}`}
+									href={`/blog/${post.id}/${post.slug}`}
 									className="group flex flex-col"
 								>
 									{post.coverImage && (
@@ -122,31 +124,31 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 							<div className="flex justify-center mt-12">
 								<div className="join">
 									{page > 1 && (
-										<Link
+										<ButtonLink
 											href={`/blog?page=${page - 1}`}
-											className="join-item btn"
+											className="join-item"
 										>
 											Previous
-										</Link>
+										</ButtonLink>
 									)}
 									{Array.from({ length: totalPages }, (_, i) => i + 1).map(
 										(p) => (
-											<Link
+											<ButtonLink
 												key={p}
 												href={`/blog?page=${p}`}
-												className={`join-item btn ${p === page ? "btn-active" : ""}`}
+												className={`join-item ${p === page ? "btn-active" : ""}`}
 											>
 												{p}
-											</Link>
+											</ButtonLink>
 										)
 									)}
 									{page < totalPages && (
-										<Link
+										<ButtonLink
 											href={`/blog?page=${page + 1}`}
-											className="join-item btn"
+											className="join-item"
 										>
 											Next
-										</Link>
+										</ButtonLink>
 									)}
 								</div>
 							</div>

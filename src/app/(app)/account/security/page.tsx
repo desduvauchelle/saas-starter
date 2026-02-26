@@ -7,6 +7,7 @@
 import { useState } from "react"
 import { signOut } from "next-auth/react"
 import type { ApiResponse } from "@/types/api"
+import { Button, Input } from "@/components/ui"
 
 export default function SecurityPage() {
 	const [currentPassword, setCurrentPassword] = useState("")
@@ -95,61 +96,41 @@ export default function SecurityPage() {
 					<h2 className="card-title text-lg">Change Password</h2>
 
 					<form onSubmit={handlePasswordChange} className="space-y-4">
-						<div className="form-control">
-							<label className="label" htmlFor="current-password">
-								<span className="label-text">Current Password</span>
-							</label>
-							<input
-								id="current-password"
-								type="password"
-								className="input input-bordered w-full"
-								value={currentPassword}
-								onChange={(e) => setCurrentPassword(e.target.value)}
-								required
-								autoComplete="current-password"
-							/>
-						</div>
+						<Input
+							label="Current Password"
+							id="current-password"
+							type="password"
+							value={currentPassword}
+							onChange={(e) => setCurrentPassword(e.target.value)}
+							required
+							autoComplete="current-password"
+						/>
 
-						<div className="form-control">
-							<label className="label" htmlFor="new-pass">
-								<span className="label-text">New Password</span>
-							</label>
-							<input
-								id="new-pass"
-								type="password"
-								className="input input-bordered w-full"
-								value={newPassword}
-								onChange={(e) => setNewPassword(e.target.value)}
-								required
-								minLength={8}
-								autoComplete="new-password"
-							/>
-						</div>
+						<Input
+							label="New Password"
+							id="new-pass"
+							type="password"
+							value={newPassword}
+							onChange={(e) => setNewPassword(e.target.value)}
+							required
+							minLength={8}
+							autoComplete="new-password"
+						/>
 
-						<div className="form-control">
-							<label className="label" htmlFor="confirm-pass">
-								<span className="label-text">Confirm New Password</span>
-							</label>
-							<input
-								id="confirm-pass"
-								type="password"
-								className="input input-bordered w-full"
-								value={confirmPassword}
-								onChange={(e) => setConfirmPassword(e.target.value)}
-								required
-								minLength={8}
-								autoComplete="new-password"
-							/>
-						</div>
+						<Input
+							label="Confirm New Password"
+							id="confirm-pass"
+							type="password"
+							value={confirmPassword}
+							onChange={(e) => setConfirmPassword(e.target.value)}
+							required
+							minLength={8}
+							autoComplete="new-password"
+						/>
 
-						<button
-							type="submit"
-							className="btn btn-primary"
-							disabled={loading}
-						>
-							{loading && <span className="loading loading-spinner loading-sm" />}
+						<Button type="submit" variant="primary" loading={loading}>
 							Update Password
-						</button>
+						</Button>
 					</form>
 				</div>
 			</div>
@@ -165,33 +146,35 @@ export default function SecurityPage() {
 
 					{showDeleteConfirm ? (
 						<div className="flex gap-2 mt-2">
-							<button
+							<Button
 								type="button"
-								className="btn btn-error btn-sm"
+								variant="error"
+								size="sm"
 								onClick={handleDeleteAccount}
-								disabled={deleteLoading}
+								loading={deleteLoading}
 							>
-								{deleteLoading && (
-									<span className="loading loading-spinner loading-sm" />
-								)}
 								Yes, Delete My Account
-							</button>
-							<button
+							</Button>
+							<Button
 								type="button"
-								className="btn btn-ghost btn-sm"
+								variant="ghost"
+								size="sm"
 								onClick={() => setShowDeleteConfirm(false)}
 							>
 								Cancel
-							</button>
+							</Button>
 						</div>
 					) : (
-						<button
+						<Button
 							type="button"
-							className="btn btn-outline btn-error btn-sm w-fit mt-2"
+							variant="error"
+							size="sm"
+							outline
+							className="w-fit mt-2"
 							onClick={() => setShowDeleteConfirm(true)}
 						>
 							Delete Account
-						</button>
+						</Button>
 					)}
 				</div>
 			</div>

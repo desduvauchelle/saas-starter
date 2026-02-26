@@ -9,6 +9,7 @@
 
 import { signIn } from "next-auth/react"
 import type { AuthProviderInfo } from "@/types/auth"
+import { Button } from "@/components/ui"
 
 interface OAuthButtonsProps {
 	providers: AuthProviderInfo[]
@@ -30,15 +31,16 @@ export function OAuthButtons({ providers, callbackUrl = "/dashboard" }: OAuthBut
 		<div className="space-y-2">
 			<div className="divider text-sm text-base-content/60">or continue with</div>
 			{enabled.map((provider) => (
-				<button
+				<Button
 					key={provider.id}
 					type="button"
 					onClick={() => signIn(provider.id, { callbackUrl })}
-					className="btn btn-outline w-full gap-2"
+					outline
+					className="w-full gap-2"
 				>
 					<span className="font-bold">{providerIcons[provider.id]}</span>
 					Continue with {provider.name}
-				</button>
+				</Button>
 			))}
 		</div>
 	)

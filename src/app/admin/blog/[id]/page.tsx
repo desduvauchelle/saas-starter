@@ -10,6 +10,7 @@ import Link from "next/link"
 import { PostEditor } from "@/components/admin/PostEditor"
 import type { PostStatus } from "@prisma/client"
 import { parseApiResponse } from "@/lib/api/client"
+import { serializeFrontmatter } from "@/lib/blog/parser"
 
 interface PostData {
 	id: string
@@ -27,6 +28,25 @@ interface PostData {
 		id: string
 		name: string | null
 	}
+}
+
+/** Reconstruct raw frontmatter+content for the editor.
+ *  If the content already has a frontmatter block, use it directly.
+ *  Otherwise serialize from the DB fields (legacy posts). */
+function buildRawContent(post: PostData): string {
+	if (post.content.trimStart().startsWith("---")) {
+		return post.content
+	}
+	return serializeFrontmatter(
+		{
+			title: post.title,
+			slug: post.slug,
+			description: post.description ?? "",
+			keywords: post.keywords,
+			coverImage: post.coverImage ?? undefined,
+		},
+		post.content
+	)
 }
 
 export default function AdminEditPostPage() {
@@ -57,15 +77,7 @@ export default function AdminEditPostPage() {
 		void fetchPost()
 	}, [fetchPost])
 
-	const handleSubmit = async (data: {
-		title: string
-		slug: string
-		description: string
-		keywords: string[]
-		content: string
-		coverImage: string
-		status: string
-	}) => {
+	const handleSubmit = async (data: { rawContent: string; status: PostStatus }) => {
 		const res = await fetch(`/api/admin/blog/${params.id}`, {
 			method: "PATCH",
 			headers: { "Content-Type": "application/json" },
@@ -125,7 +137,7 @@ export default function AdminEditPostPage() {
 			<div className="flex items-center justify-between mb-6">
 				<h1 className="text-2xl font-bold">Edit Post</h1>
 				<a
-					href={`/blog/${post.slug}`}
+					href={`/blog/${post.id}/${post.slug}`}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="btn btn-ghost btn-sm"
@@ -135,15 +147,9 @@ export default function AdminEditPostPage() {
 			</div>
 
 			<PostEditor
-				initialData={{
-					title: post.title,
-					slug: post.slug,
-					description: post.description ?? "",
-					keywords: post.keywords,
-					content: post.content,
-					coverImage: post.coverImage ?? "",
-					status: post.status,
-				}}
+				postId={post.id}
+				initialRawContent={buildRawContent(post)}
+				initialStatus={post.status}
 				onSubmit={handleSubmit}
 				submitLabel="Update Post"
 				showDelete

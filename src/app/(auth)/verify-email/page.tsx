@@ -2,7 +2,7 @@
  * Verify Email page — shown after registration or magic-link send.
  */
 
-import Link from "next/link"
+import { ButtonLink } from "@/components/ui"
 
 export const metadata = {
 	title: "Check Your Email",
@@ -17,9 +17,9 @@ export default function VerifyEmailPage() {
 					We&apos;ve sent you an email with a link to verify your account.
 					Please check your inbox (and spam folder).
 				</p>
-				<Link href="/login" className="btn btn-primary mt-4">
+				<ButtonLink href="/login" variant="primary" className="mt-4">
 					Back to Sign In
-				</Link>
+				</ButtonLink>
 			</div>
 		</div>
 	)

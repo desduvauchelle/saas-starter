@@ -9,6 +9,7 @@
  */
 
 import { useEffect, useState } from "react"
+import { Button } from "@/components/ui"
 
 type ThemeMode = "auto" | "light" | "dark"
 
@@ -57,14 +58,15 @@ export function ThemeToggle() {
 					{ value: "dark", label: "🌙 Dark" },
 				] as { value: ThemeMode; label: string }[]
 			).map(({ value, label }) => (
-				<button
+				<Button
 					key={value}
+					variant={mode === value ? "primary" : "ghost"}
+					size="xs"
 					onClick={() => handleChange(value)}
-					className={`btn btn-xs ${mode === value ? "btn-primary" : "btn-ghost"}`}
 					aria-pressed={mode === value}
 				>
 					{label}
-				</button>
+				</Button>
 			))}
 		</div>
 	)

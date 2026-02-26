@@ -11,6 +11,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import type { UserRole } from "@prisma/client"
+import { Button, ButtonLink, Input, Select, Toggle } from "@/components/ui"
 
 export default function AdminCreateUserPage() {
 	const router = useRouter()
@@ -86,107 +87,65 @@ export default function AdminCreateUserPage() {
 					)}
 
 					<form onSubmit={handleSubmit} className="space-y-4">
-						<div className="form-control">
-							<label className="label">
-								<span className="label-text">Name *</span>
-							</label>
-							<input
-								type="text"
-								className={`input input-bordered ${getFieldError("name") ? "input-error" : ""}`}
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-								required
-							/>
-							{getFieldError("name") && (
-								<label className="label">
-									<span className="label-text-alt text-error">{getFieldError("name")}</span>
-								</label>
-							)}
-						</div>
+						<Input
+							label="Name *"
+							type="text"
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+							required
+							error={getFieldError("name")}
+						/>
 
-						<div className="form-control">
-							<label className="label">
-								<span className="label-text">Email *</span>
-							</label>
-							<input
-								type="email"
-								className={`input input-bordered ${getFieldError("email") ? "input-error" : ""}`}
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								required
-							/>
-							{getFieldError("email") && (
-								<label className="label">
-									<span className="label-text-alt text-error">{getFieldError("email")}</span>
-								</label>
-							)}
-						</div>
+						<Input
+							label="Email *"
+							type="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							required
+							error={getFieldError("email")}
+						/>
 
-						<div className="form-control">
-							<label className="label">
-								<span className="label-text">Password *</span>
-							</label>
-							<input
-								type="password"
-								className={`input input-bordered ${getFieldError("password") ? "input-error" : ""}`}
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								required
-								minLength={8}
-							/>
-							{getFieldError("password") && (
-								<label className="label">
-									<span className="label-text-alt text-error">{getFieldError("password")}</span>
-								</label>
-							)}
-							<label className="label">
-								<span className="label-text-alt text-base-content/50">
-									Minimum 8 characters
-								</span>
-							</label>
-						</div>
+						<Input
+							label="Password *"
+							type="password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							required
+							minLength={8}
+							error={getFieldError("password")}
+							description="Minimum 8 characters"
+						/>
 
-						<div className="form-control">
-							<label className="label">
-								<span className="label-text">Role</span>
-							</label>
-							<select
-								className="select select-bordered"
-								value={role}
-								onChange={(e) => setRole(e.target.value as UserRole)}
-							>
-								<option value="USER">User</option>
-								<option value="ADMIN">Admin</option>
-								<option value="OWNER">Owner</option>
-							</select>
-						</div>
+						<Select
+							label="Role"
+							value={role}
+							onChange={(e) => setRole(e.target.value as UserRole)}
+							options={[
+								{ label: "User", value: "USER" },
+								{ label: "Admin", value: "ADMIN" },
+								{ label: "Owner", value: "OWNER" },
+							]}
+						/>
 
-						<div className="form-control">
-							<label className="label cursor-pointer justify-start gap-3">
-								<input
-									type="checkbox"
-									className="toggle toggle-success"
-									checked={isActive}
-									onChange={(e) => setIsActive(e.target.checked)}
-								/>
-								<span className="label-text">
-									{isActive ? "Active" : "Inactive"}
-								</span>
-							</label>
-						</div>
+						<Toggle
+							label={isActive ? "Active" : "Inactive"}
+							color="success"
+							checked={isActive}
+							onChange={(e) => setIsActive(e.target.checked)}
+						/>
 
 						<div className="flex gap-2 pt-2">
-							<button
+							<Button
 								type="submit"
-								className="btn btn-primary"
+								variant="primary"
+								loading={saving}
 								disabled={saving}
 							>
-								{saving && <span className="loading loading-spinner loading-xs" />}
 								Create User
-							</button>
-							<Link href="/admin/users" className="btn btn-ghost">
+							</Button>
+							<ButtonLink href="/admin/users" variant="ghost">
 								Cancel
-							</Link>
+							</ButtonLink>
 						</div>
 					</form>
 				</div>

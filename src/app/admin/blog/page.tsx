@@ -6,6 +6,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
+import { Button, ButtonLink, TextLink } from "@/components/ui"
 import { ResourceTable, type Column } from "@/components/admin/ResourceTable"
 import { ResourceFilters, type FilterConfig } from "@/components/admin/ResourceFilters"
 import { Pagination } from "@/components/admin/Pagination"
@@ -93,9 +94,9 @@ export default function AdminBlogPage() {
 			label: "Title",
 			sortable: true,
 			render: (row) => (
-				<Link href={`/admin/blog/${row.id}`} className="link link-hover font-medium">
+				<TextLink href={`/admin/blog/${row.id}`} variant="hover" className="font-medium">
 					{row.title}
-				</Link>
+				</TextLink>
 			),
 		},
 		{
@@ -151,9 +152,9 @@ export default function AdminBlogPage() {
 		<div>
 			<div className="flex items-center justify-between mb-6">
 				<h1 className="text-2xl font-bold">Blog Posts</h1>
-				<Link href="/admin/blog/new" className="btn btn-primary btn-sm">
+				<ButtonLink href="/admin/blog/new" variant="primary" size="sm">
 					<i className="fa-solid fa-plus mr-1" /> New Post
-				</Link>
+				</ButtonLink>
 			</div>
 
 			<div className="card bg-base-200">
@@ -183,11 +184,11 @@ export default function AdminBlogPage() {
 						emptyMessage="No posts found."
 						actions={(row) => (
 							<div className="flex gap-1">
-								<Link href={`/admin/blog/${row.id}`} className="btn btn-ghost btn-xs" title="Edit">
-									<i className="fa-solid fa-pen-to-square" />
-								</Link>
+							<ButtonLink href={`/admin/blog/${row.id}`} variant="ghost" size="xs" title="Edit">
+								<i className="fa-solid fa-pen-to-square" />
+							</ButtonLink>
 								<a
-									href={`/blog/${row.slug}`}
+									href={`/blog/${row.id}/${row.slug}`}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="btn btn-ghost btn-xs"
@@ -195,13 +196,9 @@ export default function AdminBlogPage() {
 								>
 									<i className="fa-solid fa-eye" />
 								</a>
-								<button
-									onClick={() => handleDelete(row.id)}
-									className="btn btn-ghost btn-xs text-error"
-									title="Delete"
-								>
-									<i className="fa-solid fa-trash" />
-								</button>
+							<Button variant="ghost" size="xs" onClick={() => handleDelete(row.id)} className="text-error" title="Delete">
+								<i className="fa-solid fa-trash" />
+							</Button>
 							</div>
 						)}
 					/>

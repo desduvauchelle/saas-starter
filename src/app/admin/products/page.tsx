@@ -5,7 +5,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import Link from "next/link"
+import { Button, ButtonLink, TextLink } from "@/components/ui"
 import { ResourceTable, type Column } from "@/components/admin/ResourceTable"
 import { ResourceFilters, type FilterConfig } from "@/components/admin/ResourceFilters"
 import { Pagination } from "@/components/admin/Pagination"
@@ -108,9 +108,9 @@ export default function AdminProductsPage() {
 			sortable: true,
 			render: (row) => (
 				<div>
-					<Link href={`/admin/products/${row.id}`} className="link link-hover font-medium">
+					<TextLink href={`/admin/products/${row.id}`} variant="hover" className="font-medium">
 						{row.name}
-					</Link>
+					</TextLink>
 					{row.recommended && (
 						<span className="badge badge-xs badge-accent ml-2">Recommended</span>
 					)}
@@ -176,9 +176,9 @@ export default function AdminProductsPage() {
 		<div>
 			<div className="flex items-center justify-between mb-6">
 				<h1 className="text-2xl font-bold">Products</h1>
-				<Link href="/admin/products/new" className="btn btn-primary btn-sm">
+				<ButtonLink href="/admin/products/new" variant="primary" size="sm">
 					<i className="fa-solid fa-plus mr-1" /> New Product
-				</Link>
+				</ButtonLink>
 			</div>
 
 			<div className="card bg-base-200">
@@ -205,16 +205,18 @@ export default function AdminProductsPage() {
 						emptyMessage="No products found."
 						actions={(row) => (
 							<div className="flex gap-1">
-								<Link href={`/admin/products/${row.id}`} className="btn btn-ghost btn-xs" title="Edit">
+								<ButtonLink href={`/admin/products/${row.id}`} variant="ghost" size="xs" title="Edit">
 									<i className="fa-solid fa-pen-to-square" />
-								</Link>
-								<button
+								</ButtonLink>
+								<Button
 									onClick={() => handleDelete(row.id)}
-									className="btn btn-ghost btn-xs text-error"
+									variant="ghost"
+									size="xs"
+									className="text-error"
 									title="Delete"
 								>
 									<i className="fa-solid fa-trash" />
-								</button>
+								</Button>
 							</div>
 						)}
 					/>

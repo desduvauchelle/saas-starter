@@ -57,6 +57,38 @@ export class FrontmatterParseError extends Error {
 }
 
 /**
+ * Serialize post metadata and markdown body into a raw frontmatter string.
+ *
+ * @param meta - Post metadata fields
+ * @param content - Markdown body (without frontmatter)
+ * @returns Full raw markdown string with YAML frontmatter block
+ */
+export function serializeFrontmatter(
+	meta: {
+		title: string
+		slug: string
+		description?: string
+		keywords?: string[]
+		coverImage?: string
+	},
+	content: string
+): string {
+	const kw = (meta.keywords ?? []).map((k) => JSON.stringify(k)).join(", ")
+	const lines = [
+		"---",
+		`title: ${JSON.stringify(meta.title)}`,
+		`slug: ${JSON.stringify(meta.slug)}`,
+		`description: ${JSON.stringify(meta.description ?? "")}`,
+		`keywords: [${kw}]`,
+	]
+	if (meta.coverImage) {
+		lines.push(`coverImage: ${JSON.stringify(meta.coverImage)}`)
+	}
+	lines.push("---", "", content)
+	return lines.join("\n")
+}
+
+/**
  * Parse a raw markdown string with frontmatter into typed metadata + content.
  *
  * @param raw - Full markdown string including frontmatter block

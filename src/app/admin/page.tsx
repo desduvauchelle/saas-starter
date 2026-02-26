@@ -6,6 +6,8 @@
  */
 
 import prisma from "@/lib/prisma"
+import Link from "next/link"
+import { ButtonLink } from "@/components/ui"
 
 export default async function AdminDashboardPage() {
 	const [userCount, postCount, productCount, subscriptionCount] =
@@ -54,7 +56,7 @@ export default async function AdminDashboardPage() {
 			{/* Stats Grid */}
 			<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
 				{stats.map((stat) => (
-					<a
+					<Link
 						key={stat.label}
 						href={stat.href}
 						className="card bg-base-200 hover:bg-base-300 transition-colors"
@@ -70,7 +72,7 @@ export default async function AdminDashboardPage() {
 								/>
 							</div>
 						</div>
-					</a>
+					</Link>
 				))}
 			</div>
 
@@ -79,15 +81,15 @@ export default async function AdminDashboardPage() {
 				<div className="card-body">
 					<h2 className="card-title text-lg">Quick Actions</h2>
 					<div className="flex flex-wrap gap-2 mt-2">
-						<a href="/admin/users" className="btn btn-sm btn-primary">
+						<ButtonLink href="/admin/users" variant="primary" size="sm">
 							<i className="fa-solid fa-user-plus mr-1" /> Manage Users
-						</a>
-						<a href="/admin/blog/new" className="btn btn-sm btn-secondary">
+						</ButtonLink>
+						<ButtonLink href="/admin/blog/new" variant="secondary" size="sm">
 							<i className="fa-solid fa-plus mr-1" /> New Post
-						</a>
-						<a href="/admin/products/new" className="btn btn-sm btn-accent">
+						</ButtonLink>
+						<ButtonLink href="/admin/products/new" variant="accent" size="sm">
 							<i className="fa-solid fa-plus mr-1" /> New Product
-						</a>
+						</ButtonLink>
 					</div>
 				</div>
 			</div>

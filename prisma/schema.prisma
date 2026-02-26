@@ -117,7 +117,7 @@ model VerificationToken {
 
 model Post {
   id          String     @id @default(cuid())
-  slug        String     @unique
+  slug        String
   title       String
   description String?
   keywords    String[]   @default([])

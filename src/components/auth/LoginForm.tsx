@@ -9,8 +9,8 @@
 import { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
-import Link from "next/link"
 import type { AuthConfig } from "@/types/auth"
+import { Button, Input, TextLink } from "@/components/ui"
 import { OAuthButtons } from "./OAuthButtons"
 
 interface LoginFormProps {
@@ -100,81 +100,69 @@ export function LoginForm({ authConfig }: LoginFormProps) {
 
 				{mode === "credentials" ? (
 					<form onSubmit={handleCredentialsSubmit} className="space-y-4">
-						<div className="form-control">
-							<label className="label" htmlFor="login-email">
-								<span className="label-text">Email</span>
-							</label>
-							<input
-								id="login-email"
-								type="email"
-								placeholder="you@example.com"
-								className="input input-bordered w-full"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								required
-								autoComplete="email"
-							/>
-						</div>
+						<Input
+							id="login-email"
+							label="Email"
+							type="email"
+							placeholder="you@example.com"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							required
+							autoComplete="email"
+						/>
 
 						<div className="form-control">
-							<label className="label" htmlFor="login-password">
-								<span className="label-text">Password</span>
-							</label>
-							<input
+							<Input
 								id="login-password"
+								label="Password"
 								type="password"
 								placeholder="••••••••"
-								className="input input-bordered w-full"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 								required
 								autoComplete="current-password"
 							/>
 							<label className="label">
-								<Link
+								<TextLink
 									href="/forgot-password"
-									className="label-text-alt link link-hover"
+									variant="hover"
+									className="label-text-alt"
 								>
 									Forgot password?
-								</Link>
+								</TextLink>
 							</label>
 						</div>
 
-						<button
+						<Button
 							type="submit"
-							className="btn btn-primary w-full"
-							disabled={loading}
+							variant="primary"
+							className="w-full"
+							loading={loading}
 						>
-							{loading && <span className="loading loading-spinner loading-sm" />}
 							Sign In
-						</button>
+						</Button>
 					</form>
 				) : (
 					<form onSubmit={handleMagicLinkSubmit} className="space-y-4">
-						<div className="form-control">
-							<label className="label" htmlFor="magic-email">
-								<span className="label-text">Email</span>
-							</label>
-							<input
-								id="magic-email"
-								type="email"
-								placeholder="you@example.com"
-								className="input input-bordered w-full"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								required
-								autoComplete="email"
-							/>
-						</div>
+						<Input
+							id="magic-email"
+							label="Email"
+							type="email"
+							placeholder="you@example.com"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							required
+							autoComplete="email"
+						/>
 
-						<button
+						<Button
 							type="submit"
-							className="btn btn-primary w-full"
-							disabled={loading}
+							variant="primary"
+							className="w-full"
+							loading={loading}
 						>
-							{loading && <span className="loading loading-spinner loading-sm" />}
 							Send Magic Link
-						</button>
+						</Button>
 					</form>
 				)}
 
@@ -185,9 +173,9 @@ export function LoginForm({ authConfig }: LoginFormProps) {
 
 				<p className="text-center text-sm mt-4">
 					Don&apos;t have an account?{" "}
-					<Link href="/register" className="link link-primary">
+					<TextLink href="/register" variant="primary">
 						Sign up
-					</Link>
+					</TextLink>
 				</p>
 			</div>
 		</div>

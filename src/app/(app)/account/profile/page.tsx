@@ -8,6 +8,7 @@ import { useState, useRef } from "react"
 import { useSession } from "next-auth/react"
 import type { ApiResponse } from "@/types/api"
 import type { UserPublic } from "@/types/user"
+import { Button, Input } from "@/components/ui"
 
 export default function ProfilePage() {
 	const { data: session, update } = useSession()
@@ -110,17 +111,15 @@ export default function ProfilePage() {
 							)}
 						</div>
 						<div>
-							<button
+							<Button
 								type="button"
-								className="btn btn-sm btn-outline"
+								size="sm"
+								outline
 								onClick={() => fileInputRef.current?.click()}
-								disabled={avatarLoading}
+								loading={avatarLoading}
 							>
-								{avatarLoading && (
-									<span className="loading loading-spinner loading-sm" />
-								)}
 								Upload New Avatar
-							</button>
+							</Button>
 							<input
 								ref={fileInputRef}
 								type="file"
@@ -142,42 +141,27 @@ export default function ProfilePage() {
 					<h2 className="card-title text-lg">Profile Information</h2>
 
 					<form onSubmit={handleProfileSubmit} className="space-y-4">
-						<div className="form-control">
-							<label className="label" htmlFor="profile-name">
-								<span className="label-text">Name</span>
-							</label>
-							<input
-								id="profile-name"
-								type="text"
-								className="input input-bordered w-full"
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-								required
-							/>
-						</div>
+						<Input
+							label="Name"
+							id="profile-name"
+							type="text"
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+							required
+						/>
 
-						<div className="form-control">
-							<label className="label" htmlFor="profile-email">
-								<span className="label-text">Email</span>
-							</label>
-							<input
-								id="profile-email"
-								type="email"
-								className="input input-bordered w-full"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								required
-							/>
-						</div>
+						<Input
+							label="Email"
+							id="profile-email"
+							type="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							required
+						/>
 
-						<button
-							type="submit"
-							className="btn btn-primary"
-							disabled={loading}
-						>
-							{loading && <span className="loading loading-spinner loading-sm" />}
+						<Button type="submit" variant="primary" loading={loading}>
 							Save Changes
-						</button>
+						</Button>
 					</form>
 				</div>
 			</div>

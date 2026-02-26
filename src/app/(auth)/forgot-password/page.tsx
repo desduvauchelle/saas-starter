@@ -5,8 +5,8 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import type { ApiResponse } from "@/types/api"
+import { Button, ButtonLink, Input, TextLink } from "@/components/ui"
 
 export default function ForgotPasswordPage() {
 	const [email, setEmail] = useState("")
@@ -48,9 +48,9 @@ export default function ForgotPasswordPage() {
 					<p className="text-base-content/70">
 						If an account exists with that email, we&apos;ve sent a password reset link.
 					</p>
-					<Link href="/login" className="btn btn-primary mt-4">
+					<ButtonLink href="/login" variant="primary" className="mt-4">
 						Back to Sign In
-					</Link>
+					</ButtonLink>
 				</div>
 			</div>
 		)
@@ -71,37 +71,32 @@ export default function ForgotPasswordPage() {
 				)}
 
 				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className="form-control">
-						<label className="label" htmlFor="forgot-email">
-							<span className="label-text">Email</span>
-						</label>
-						<input
-							id="forgot-email"
-							type="email"
-							placeholder="you@example.com"
-							className="input input-bordered w-full"
-							value={email}
-							onChange={(e) => setEmail(e.target.value)}
-							required
-							autoComplete="email"
-						/>
-					</div>
+					<Input
+						id="forgot-email"
+						label="Email"
+						type="email"
+						placeholder="you@example.com"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						required
+						autoComplete="email"
+					/>
 
-					<button
+					<Button
 						type="submit"
-						className="btn btn-primary w-full"
-						disabled={loading}
+						variant="primary"
+						className="w-full"
+						loading={loading}
 					>
-						{loading && <span className="loading loading-spinner loading-sm" />}
 						Send Reset Link
-					</button>
+					</Button>
 				</form>
 
 				<p className="text-center text-sm mt-4">
 					Remember your password?{" "}
-					<Link href="/login" className="link link-primary">
+					<TextLink href="/login" variant="primary">
 						Sign in
-					</Link>
+					</TextLink>
 				</p>
 			</div>
 		</div>

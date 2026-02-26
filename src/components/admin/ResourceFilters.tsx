@@ -8,6 +8,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { Input, Select } from "@/components/ui"
 
 export interface FilterOption {
 	label: string
@@ -69,41 +70,27 @@ export function ResourceFilters({
 	return (
 		<div className="flex flex-wrap gap-3 items-end mb-4">
 			{/* Search */}
-			<div className="form-control flex-1 min-w-[200px]">
-				<label className="label py-1">
-					<span className="label-text text-xs">Search</span>
-				</label>
-				<div className="relative">
-					<input
-						type="text"
-						placeholder={searchPlaceholder}
-						className="input input-bordered input-sm w-full pl-8"
-						value={localSearch}
-						onChange={(e) => handleSearchChange(e.target.value)}
-					/>
-					<i className="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/40 text-xs" />
-				</div>
-			</div>
+			<Input
+				label="Search"
+				size="sm"
+				leftIcon="fa-solid fa-magnifying-glass"
+				placeholder={searchPlaceholder}
+				value={localSearch}
+				onChange={(e) => handleSearchChange(e.target.value)}
+				wrapperClassName="flex-1 min-w-[200px]"
+			/>
 
 			{/* Filters */}
 			{filters?.map((filter) => (
-				<div key={filter.key} className="form-control min-w-[140px]">
-					<label className="label py-1">
-						<span className="label-text text-xs">{filter.label}</span>
-					</label>
-					<select
-						className="select select-bordered select-sm"
-						value={filter.value}
-						onChange={(e) => onFilterChange?.(filter.key, e.target.value)}
-					>
-						<option value="">All</option>
-						{filter.options.map((opt) => (
-							<option key={opt.value} value={opt.value}>
-								{opt.label}
-							</option>
-						))}
-					</select>
-				</div>
+				<Select
+					key={filter.key}
+					label={filter.label}
+					size="sm"
+					value={filter.value}
+					onChange={(e) => onFilterChange?.(filter.key, e.target.value)}
+					options={[{ label: "All", value: "" }, ...filter.options]}
+					wrapperClassName="min-w-[140px]"
+				/>
 			))}
 		</div>
 	)

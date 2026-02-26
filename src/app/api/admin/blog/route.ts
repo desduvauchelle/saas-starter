@@ -17,21 +17,12 @@ import {
 	buildPaginationMeta,
 } from "@/lib/api/response"
 import { ApiError, ConflictError, ValidationError } from "@/lib/api/errors"
+import { parseFrontmatter, FrontmatterParseError } from "@/lib/blog/parser"
 import type { Prisma } from "@prisma/client"
 
 const createPostSchema = z.object({
-	title: z.string().min(1, "Title is required").max(200),
-	slug: z
-		.string()
-		.min(1, "Slug is required")
-		.max(200)
-		.regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase alphanumeric with hyphens"),
-	description: z.string().max(500).optional().default(""),
-	keywords: z.array(z.string()).optional().default([]),
-	content: z.string().min(1, "Content is required"),
-	coverImage: z.string().url().optional().nullable(),
+	rawContent: z.string().min(1, "Content is required"),
 	status: z.enum(["DRAFT", "PUBLISHED"]).optional().default("DRAFT"),
-	publishedAt: z.string().datetime().optional().nullable(),
 })
 
 const postSelect = {
@@ -126,28 +117,35 @@ export async function POST(request: NextRequest) {
 			throw new ValidationError(details)
 		}
 
-		const data = result.data
-
-		// Check for duplicate slug
-		const existing = await prisma.post.findUnique({
-			where: { slug: data.slug },
-		})
-		if (existing) {
-			throw new ConflictError("A post with this slug already exists")
+		// Parse frontmatter from raw content
+		let parsed: ReturnType<typeof parseFrontmatter>
+		try {
+			parsed = parseFrontmatter(result.data.rawContent)
+		} catch (err) {
+			if (err instanceof FrontmatterParseError) {
+				const details: Record<string, string[]> = {}
+				for (const f of err.fields) {
+					details[f.field] = [f.message]
+				}
+				return errorResponse(err.message, "FRONTMATTER_INVALID", 422, details)
+			}
+			throw err
 		}
+
+		const { meta } = parsed
+		const status = result.data.status
 
 		const post = await prisma.post.create({
 			data: {
-				title: data.title,
-				slug: data.slug,
-				description: data.description,
-				keywords: data.keywords,
-				content: data.content,
-				coverImage: data.coverImage ?? null,
-				status: data.status,
-				publishedAt: data.status === "PUBLISHED"
-					? (data.publishedAt ? new Date(data.publishedAt) : new Date())
-					: null,
+				title: meta.title,
+				slug: meta.slug,
+				description: meta.description ?? "",
+				keywords: meta.keywords ?? [],
+				// Store full raw content (frontmatter + body) as source of truth
+				content: result.data.rawContent,
+				coverImage: meta.coverImage ?? null,
+				status,
+				publishedAt: status === "PUBLISHED" ? new Date() : null,
 				authorId: session.user.id,
 			},
 			select: { ...postSelect, content: true },

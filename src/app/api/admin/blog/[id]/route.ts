@@ -15,21 +15,11 @@ import {
 	errorResponse,
 } from "@/lib/api/response"
 import { ApiError, NotFoundError, ValidationError } from "@/lib/api/errors"
+import { parseFrontmatter, FrontmatterParseError } from "@/lib/blog/parser"
 
 const updatePostSchema = z.object({
-	title: z.string().min(1).max(200).optional(),
-	slug: z
-		.string()
-		.min(1)
-		.max(200)
-		.regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-		.optional(),
-	description: z.string().max(500).optional(),
-	keywords: z.array(z.string()).optional(),
-	content: z.string().min(1).optional(),
-	coverImage: z.string().url().optional().nullable(),
+	rawContent: z.string().min(1, "Content is required").optional(),
 	status: z.enum(["DRAFT", "PUBLISHED"]).optional(),
-	publishedAt: z.string().datetime().optional().nullable(),
 })
 
 const postSelect = {
@@ -111,27 +101,40 @@ export async function PATCH(
 			throw new NotFoundError("Post")
 		}
 
-		// Check slug uniqueness if changed
-		if (result.data.slug && result.data.slug !== existing.slug) {
-			const slugTaken = await prisma.post.findUnique({
-				where: { slug: result.data.slug },
-			})
-			if (slugTaken) {
-				return errorResponse("Slug already in use", "CONFLICT", 409)
+		// Parse frontmatter if rawContent is provided
+		const updateData: Record<string, unknown> = {}
+
+		if (result.data.rawContent) {
+			let parsed: ReturnType<typeof parseFrontmatter>
+			try {
+				parsed = parseFrontmatter(result.data.rawContent)
+			} catch (err) {
+				if (err instanceof FrontmatterParseError) {
+					const details: Record<string, string[]> = {}
+					for (const f of err.fields) {
+						details[f.field] = [f.message]
+					}
+					return errorResponse(err.message, "FRONTMATTER_INVALID", 422, details)
+				}
+				throw err
 			}
+
+			const { meta } = parsed
+
+			updateData.title = meta.title
+			updateData.slug = meta.slug
+			updateData.description = meta.description ?? ""
+			updateData.keywords = meta.keywords ?? []
+			updateData.coverImage = meta.coverImage ?? null
+			// Store full raw content (frontmatter + body) as source of truth
+			updateData.content = result.data.rawContent
 		}
 
-		// Handle publish date
-		const updateData: Record<string, unknown> = { ...result.data }
-
-		if (result.data.status === "PUBLISHED" && !existing.publishedAt) {
-			updateData.publishedAt = result.data.publishedAt
-				? new Date(result.data.publishedAt)
-				: new Date()
-		}
-
-		if (result.data.publishedAt) {
-			updateData.publishedAt = new Date(result.data.publishedAt)
+		if (result.data.status) {
+			updateData.status = result.data.status
+			if (result.data.status === "PUBLISHED" && !existing.publishedAt) {
+				updateData.publishedAt = new Date()
+			}
 		}
 
 		const post = await prisma.post.update({

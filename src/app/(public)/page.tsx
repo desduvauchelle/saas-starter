@@ -5,7 +5,7 @@
  * Includes Hero, Features, Pricing, Testimonials, and CTA sections.
  */
 
-import Link from "next/link"
+import { ButtonLink } from "@/components/ui"
 import { PricingTable } from "@/components/billing/PricingTable"
 import prisma from "@/lib/prisma"
 import type { Metadata } from "next"
@@ -56,12 +56,12 @@ export default async function LandingPage() {
 							pre-configured and ready to go.
 						</p>
 						<div className="flex gap-3 justify-center">
-							<Link href="/register" className="btn btn-primary btn-lg">
+							<ButtonLink href="/register" variant="primary" size="lg">
 								Get Started Free
-							</Link>
-							<Link href="#features" className="btn btn-ghost btn-lg">
+							</ButtonLink>
+							<ButtonLink href="#features" variant="ghost" size="lg">
 								Learn More
-							</Link>
+							</ButtonLink>
 						</div>
 					</div>
 				</div>
@@ -152,12 +152,14 @@ export default async function LandingPage() {
 						Join thousands of developers who are already building with{" "}
 						{appName}. Free to start, no credit card required.
 					</p>
-					<Link
+					<ButtonLink
 						href="/register"
-						className="btn btn-secondary btn-lg mt-6"
+						variant="secondary"
+						size="lg"
+						className="mt-6"
 					>
 						Start Building Today
-					</Link>
+					</ButtonLink>
 				</div>
 			</section>
 		</div>

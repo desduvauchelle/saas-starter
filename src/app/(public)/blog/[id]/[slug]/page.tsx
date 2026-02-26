@@ -5,19 +5,21 @@
  * Generates static params for ISR.
  */
 
+import { TextLink } from "@/components/ui"
 import { notFound } from "next/navigation"
 import prisma from "@/lib/prisma"
 import { renderMarkdown } from "@/lib/blog/renderer"
+import { parseFrontmatter } from "@/lib/blog/parser"
 import type { Metadata } from "next"
 
 interface PostPageProps {
-	params: Promise<{ slug: string }>
+	params: Promise<{ id: string; slug: string }>
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-	const { slug } = await params
+	const { id } = await params
 	const post = await prisma.post.findUnique({
-		where: { slug, status: "PUBLISHED" },
+		where: { id, status: "PUBLISHED" },
 		select: { title: true, description: true, keywords: true, coverImage: true },
 	})
 
@@ -39,17 +41,17 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
 export async function generateStaticParams() {
 	const posts = await prisma.post.findMany({
 		where: { status: "PUBLISHED" },
-		select: { slug: true },
+		select: { id: true, slug: true },
 	})
 
-	return posts.map((post) => ({ slug: post.slug }))
+	return posts.map((post) => ({ id: post.id, slug: post.slug }))
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-	const { slug } = await params
+	const { id } = await params
 
 	const post = await prisma.post.findUnique({
-		where: { slug, status: "PUBLISHED" },
+		where: { id, status: "PUBLISHED" },
 		include: {
 			author: {
 				select: { name: true, avatarUrl: true },
@@ -59,7 +61,17 @@ export default async function PostPage({ params }: PostPageProps) {
 
 	if (!post) notFound()
 
-	const html = await renderMarkdown(post.content)
+	// Extract markdown body from raw frontmatter+content.
+	// Falls back to using content as-is for legacy posts without frontmatter.
+	let markdownBody = post.content
+	try {
+		const parsed = parseFrontmatter(post.content)
+		markdownBody = parsed.content
+	} catch {
+		// Legacy post without frontmatter — use full content
+	}
+
+	const html = await renderMarkdown(markdownBody)
 
 	return (
 		<div className="bg-base-100 min-h-screen">
@@ -67,7 +79,7 @@ export default async function PostPage({ params }: PostPageProps) {
 			<header className="bg-base-200 border-b border-base-300 pt-20 pb-16">
 				<div className="container mx-auto px-4 max-w-3xl text-center">
 					<div className="flex items-center justify-center gap-2 mb-6 text-sm text-primary font-bold uppercase tracking-widest">
-						<Link href="/blog" className="hover:underline">Blog</Link>
+						<TextLink href="/blog" className="hover:underline">Blog</TextLink>
 						<span>&bull;</span>
 						{post.publishedAt && (
 							<time dateTime={post.publishedAt.toISOString()}>

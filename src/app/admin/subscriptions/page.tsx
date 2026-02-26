@@ -5,7 +5,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import Link from "next/link"
+import { TextLink } from "@/components/ui"
 import { ResourceTable, type Column } from "@/components/admin/ResourceTable"
 import { ResourceFilters, type FilterConfig } from "@/components/admin/ResourceFilters"
 import { Pagination } from "@/components/admin/Pagination"
@@ -108,9 +108,9 @@ export default function AdminSubscriptionsPage() {
 			label: "User",
 			render: (row) => (
 				<div>
-					<Link href={`/admin/users/${row.user.id}`} className="link link-hover font-medium">
-						{row.user.name ?? "—"}
-					</Link>
+				<TextLink href={`/admin/users/${row.user.id}`} variant="hover" className="font-medium">
+					{row.user.name ?? "—"}
+				</TextLink>
 					<div className="text-xs text-base-content/60">{row.user.email}</div>
 				</div>
 			),
@@ -120,9 +120,9 @@ export default function AdminSubscriptionsPage() {
 			label: "Product",
 			render: (row) => (
 				<div>
-					<Link href={`/admin/products/${row.product.id}`} className="link link-hover">
-						{row.product.name}
-					</Link>
+				<TextLink href={`/admin/products/${row.product.id}`} variant="hover">
+					{row.product.name}
+				</TextLink>
 					<div className="text-xs text-base-content/60">
 						{formatPrice(row.product.price, row.product.currency)}
 						{row.product.interval ? ` / ${row.product.interval.toLowerCase()}` : ""}

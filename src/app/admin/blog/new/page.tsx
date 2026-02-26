@@ -6,20 +6,13 @@
 
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { PostEditor } from "@/components/admin/PostEditor"
+import { PostEditor, DEFAULT_POST_TEMPLATE } from "@/components/admin/PostEditor"
+import type { PostStatus } from "@prisma/client"
 
 export default function AdminNewPostPage() {
 	const router = useRouter()
 
-	const handleSubmit = async (data: {
-		title: string
-		slug: string
-		description: string
-		keywords: string[]
-		content: string
-		coverImage: string
-		status: string
-	}) => {
+	const handleSubmit = async (data: { rawContent: string; status: PostStatus }) => {
 		const res = await fetch("/api/admin/blog", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -47,7 +40,11 @@ export default function AdminNewPostPage() {
 
 			<h1 className="text-2xl font-bold mb-6">New Post</h1>
 
-			<PostEditor onSubmit={handleSubmit} submitLabel="Create Post" />
+			<PostEditor
+				initialRawContent={DEFAULT_POST_TEMPLATE}
+				onSubmit={handleSubmit}
+				submitLabel="Create Post"
+			/>
 		</div>
 	)
 }

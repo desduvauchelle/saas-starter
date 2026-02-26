@@ -8,6 +8,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
+import { Button, ButtonLink, TextLink } from "@/components/ui"
 import { ResourceTable, type Column } from "@/components/admin/ResourceTable"
 import { ResourceFilters, type FilterConfig } from "@/components/admin/ResourceFilters"
 import { Pagination } from "@/components/admin/Pagination"
@@ -97,12 +98,13 @@ export default function AdminUsersPage() {
 			label: "Name",
 			sortable: true,
 			render: (row) => (
-				<Link
+				<TextLink
 					href={`/admin/users/${row.id}`}
-					className="link link-hover font-medium"
+					variant="hover"
+					className="font-medium"
 				>
 					{row.name ?? "—"}
-				</Link>
+				</TextLink>
 			),
 		},
 		{
@@ -171,9 +173,9 @@ export default function AdminUsersPage() {
 		<div>
 			<div className="flex items-center justify-between mb-6">
 				<h1 className="text-2xl font-bold">Users</h1>
-				<Link href="/admin/users/new" className="btn btn-primary btn-sm">
+				<ButtonLink href="/admin/users/new" variant="primary" size="sm">
 					<i className="fa-solid fa-plus mr-1" /> New User
-				</Link>
+				</ButtonLink>
 			</div>
 
 			<div className="card bg-base-200">
@@ -204,21 +206,22 @@ export default function AdminUsersPage() {
 						emptyMessage="No users found."
 						actions={(row) => (
 							<div className="flex gap-1">
-								<Link
-									href={`/admin/users/${row.id}`}
-									className="btn btn-ghost btn-xs"
-									title="Edit"
-								>
-									<i className="fa-solid fa-pen-to-square" />
-								</Link>
-								<button
-									onClick={() => handleDelete(row.id)}
-									className="btn btn-ghost btn-xs text-error"
-									title="Delete"
-									disabled={row.role === "OWNER"}
-								>
-									<i className="fa-solid fa-trash" />
-								</button>
+							<ButtonLink
+								href={`/admin/users/${row.id}`}
+								variant="ghost"
+								size="xs"
+							>
+								<i className="fa-solid fa-pen-to-square" />
+							</ButtonLink>
+							<Button
+								variant="ghost"
+								size="xs"
+								className="text-error"
+								onClick={() => handleDelete(row.id)}
+								disabled={row.role === "OWNER"}
+							>
+								<i className="fa-solid fa-trash" />
+							</Button>
 							</div>
 						)}
 					/>

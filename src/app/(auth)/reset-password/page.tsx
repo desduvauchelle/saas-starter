@@ -6,8 +6,8 @@
 
 import { Suspense, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import Link from "next/link"
 import type { ApiResponse } from "@/types/api"
+import { Button, ButtonLink, Input } from "@/components/ui"
 
 function ResetPasswordForm() {
 	const searchParams = useSearchParams()
@@ -57,9 +57,9 @@ function ResetPasswordForm() {
 				<div className="card-body text-center">
 					<h2 className="card-title justify-center text-2xl mb-4">Invalid Link</h2>
 					<p className="text-base-content/70">This reset link is invalid or has expired.</p>
-					<Link href="/forgot-password" className="btn btn-primary mt-4">
+					<ButtonLink href="/forgot-password" variant="primary" className="mt-4">
 						Request New Link
-					</Link>
+					</ButtonLink>
 				</div>
 			</div>
 		)
@@ -71,9 +71,9 @@ function ResetPasswordForm() {
 				<div className="card-body text-center">
 					<h2 className="card-title justify-center text-2xl mb-4">Password Reset</h2>
 					<p className="text-base-content/70">Your password has been reset successfully.</p>
-					<Link href="/login" className="btn btn-primary mt-4">
+					<ButtonLink href="/login" variant="primary" className="mt-4">
 						Sign In
-					</Link>
+					</ButtonLink>
 				</div>
 			</div>
 		)
@@ -91,48 +91,38 @@ function ResetPasswordForm() {
 				)}
 
 				<form onSubmit={handleSubmit} className="space-y-4">
-					<div className="form-control">
-						<label className="label" htmlFor="new-password">
-							<span className="label-text">New Password</span>
-						</label>
-						<input
-							id="new-password"
-							type="password"
-							placeholder="••••••••"
-							className="input input-bordered w-full"
-							value={password}
-							onChange={(e) => setPassword(e.target.value)}
-							required
-							minLength={8}
-							autoComplete="new-password"
-						/>
-					</div>
+					<Input
+						id="new-password"
+						label="New Password"
+						type="password"
+						placeholder="••••••••"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+						minLength={8}
+						autoComplete="new-password"
+					/>
 
-					<div className="form-control">
-						<label className="label" htmlFor="confirm-new-password">
-							<span className="label-text">Confirm New Password</span>
-						</label>
-						<input
-							id="confirm-new-password"
-							type="password"
-							placeholder="••••••••"
-							className="input input-bordered w-full"
-							value={confirmPassword}
-							onChange={(e) => setConfirmPassword(e.target.value)}
-							required
-							minLength={8}
-							autoComplete="new-password"
-						/>
-					</div>
+					<Input
+						id="confirm-new-password"
+						label="Confirm New Password"
+						type="password"
+						placeholder="••••••••"
+						value={confirmPassword}
+						onChange={(e) => setConfirmPassword(e.target.value)}
+						required
+						minLength={8}
+						autoComplete="new-password"
+					/>
 
-					<button
+					<Button
 						type="submit"
-						className="btn btn-primary w-full"
-						disabled={loading}
+						variant="primary"
+						className="w-full"
+						loading={loading}
 					>
-						{loading && <span className="loading loading-spinner loading-sm" />}
 						Reset Password
-					</button>
+					</Button>
 				</form>
 			</div>
 		</div>

@@ -9,6 +9,7 @@
 
 import Link from "next/link"
 import { signOut } from "next-auth/react"
+import { ButtonLink, Button } from "@/components/ui"
 import type { UserRole } from "@prisma/client"
 
 interface AppNavbarProps {
@@ -28,15 +29,15 @@ export function AppNavbar({ user }: AppNavbarProps) {
 	return (
 		<div className="navbar bg-base-100 shadow-sm">
 			<div className="flex-1">
-				<Link href="/dashboard" className="btn btn-ghost text-xl">
+				<ButtonLink href="/dashboard" variant="ghost" className="text-xl">
 					{process.env.NEXT_PUBLIC_APP_NAME ?? "SaaS Starter"}
-				</Link>
+				</ButtonLink>
 			</div>
 			<div className="flex-none gap-2">
 				{isAdmin && (
-					<Link href="/admin" className="btn btn-ghost btn-sm">
+					<ButtonLink href="/admin" variant="ghost" size="sm">
 						Admin
-					</Link>
+					</ButtonLink>
 				)}
 				<div className="dropdown dropdown-end">
 					<div
@@ -74,9 +75,9 @@ export function AppNavbar({ user }: AppNavbarProps) {
 						</li>
 						<div className="divider my-0" />
 						<li>
-							<button onClick={() => signOut({ callbackUrl: "/login" })}>
+							<Button variant="ghost" size="sm" onClick={() => signOut({ callbackUrl: "/login" })}>
 								Sign Out
-							</button>
+							</Button>
 						</li>
 					</ul>
 				</div>

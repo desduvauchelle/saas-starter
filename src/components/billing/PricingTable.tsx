@@ -9,6 +9,7 @@
 "use client"
 
 import { useState } from "react"
+import { Button, ButtonLink } from "@/components/ui"
 
 interface PricingPlan {
 	id: string
@@ -68,20 +69,22 @@ export function PricingTable({
 			{hasIntervals && (
 				<div className="flex justify-center mb-8">
 					<div className="join">
-						<button
-							className={`join-item btn btn-sm ${billingInterval === "MONTHLY" ? "btn-primary" : "btn-ghost"
-								}`}
+						<Button
+							variant={billingInterval === "MONTHLY" ? "primary" : "ghost"}
+							size="sm"
+							className="join-item"
 							onClick={() => setBillingInterval("MONTHLY")}
 						>
 							Monthly
-						</button>
-						<button
-							className={`join-item btn btn-sm ${billingInterval === "YEARLY" ? "btn-primary" : "btn-ghost"
-								}`}
+						</Button>
+						<Button
+							variant={billingInterval === "YEARLY" ? "primary" : "ghost"}
+							size="sm"
+							className="join-item"
 							onClick={() => setBillingInterval("YEARLY")}
 						>
 							Yearly
-						</button>
+						</Button>
 					</div>
 				</div>
 			)}
@@ -153,26 +156,25 @@ export function PricingTable({
 							{/* CTA */}
 							<div className="card-actions mt-4">
 								{mode === "landing" ? (
-									<a
+									<ButtonLink
 										href="/auth/register"
-										className={`btn btn-block ${plan.recommended ? "btn-primary" : "btn-outline"
-											}`}
+										variant={plan.recommended ? "primary" : undefined}
+										outline={!plan.recommended}
+										modifier="block"
 									>
 										Get Started
-									</a>
+									</ButtonLink>
 								) : (
-									<button
-										className={`btn btn-block ${plan.recommended ? "btn-primary" : "btn-outline"
-											}`}
+									<Button
+										variant={plan.recommended ? "primary" : undefined}
+										outline={!plan.recommended}
+										modifier="block"
 										disabled={loadingPlanId !== undefined && loadingPlanId !== null}
+										loading={loadingPlanId === plan.id}
 										onClick={() => onSelectPlan?.(plan.id)}
 									>
-										{loadingPlanId === plan.id ? (
-											<span className="loading loading-spinner loading-sm" />
-										) : (
-											"Subscribe"
-										)}
-									</button>
+										Subscribe
+									</Button>
 								)}
 							</div>
 						</div>

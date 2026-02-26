@@ -1,32 +1,47 @@
 /**
- * Post editor form — shared between create and edit pages.
+ * Post editor — single frontmatter + markdown textarea.
  *
- * Provides a markdown editor with metadata fields (title, slug, description,
- * keywords, cover image, status). Uses a plain textarea for markdown content.
+ * The entire post (metadata + content) is written in one textarea using
+ * YAML frontmatter at the top followed by Markdown body. Image uploads
+ * are available below for existing posts only.
+ *
+ * Expected frontmatter format:
+ * ---
+ * title: "My Post Title"
+ * slug: "my-post-title"
+ * description: "A brief description"
+ * keywords: ["saas", "startup"]
+ * coverImage: "https://example.com/image.jpg"
+ * ---
+ *
+ * Content here...
  */
 
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
+import { useRef, useState } from "react"
 import type { PostStatus } from "@prisma/client"
+import { Button, ButtonLink, Select } from "@/components/ui"
 
-interface PostFormData {
-	title: string
-	slug: string
-	description: string
-	keywords: string[]
-	content: string
-	coverImage: string
-	status: PostStatus
-}
+export const DEFAULT_POST_TEMPLATE = `---
+title: ""
+slug: ""
+description: ""
+keywords: []
+---
+
+Write your content here...`
 
 interface PostEditorProps {
-	/** Initial values (for editing) */
-	initialData?: Partial<PostFormData>
-	/** Called on save */
-	onSubmit: (data: PostFormData) => Promise<void>
-	/** Button label */
+	/** Set when editing an existing post — enables image uploads */
+	postId?: string
+	/** Initial raw frontmatter + markdown content */
+	initialRawContent?: string
+	/** Initial publish status */
+	initialStatus?: PostStatus
+	/** Called on save with the raw content and status */
+	onSubmit: (data: { rawContent: string; status: PostStatus }) => Promise<void>
+	/** Submit button label */
 	submitLabel?: string
 	/** Show delete button */
 	showDelete?: boolean
@@ -35,58 +50,29 @@ interface PostEditorProps {
 }
 
 export function PostEditor({
-	initialData,
+	postId,
+	initialRawContent,
+	initialStatus,
 	onSubmit,
 	submitLabel = "Save Post",
 	showDelete,
 	onDelete,
 }: PostEditorProps) {
-	const [title, setTitle] = useState(initialData?.title ?? "")
-	const [slug, setSlug] = useState(initialData?.slug ?? "")
-	const [description, setDescription] = useState(initialData?.description ?? "")
-	const [keywords, setKeywords] = useState(initialData?.keywords?.join(", ") ?? "")
-	const [content, setContent] = useState(initialData?.content ?? "")
-	const [coverImage, setCoverImage] = useState(initialData?.coverImage ?? "")
-	const [status, setStatus] = useState<PostStatus>(initialData?.status ?? "DRAFT")
+	const [rawContent, setRawContent] = useState(initialRawContent ?? DEFAULT_POST_TEMPLATE)
+	const [status, setStatus] = useState<PostStatus>(initialStatus ?? "DRAFT")
 	const [saving, setSaving] = useState(false)
 	const [error, setError] = useState("")
-
-	/** Auto-generate slug from title */
-	const generateSlug = (text: string): string => {
-		return text
-			.toLowerCase()
-			.replace(/[^a-z0-9\s-]/g, "")
-			.replace(/\s+/g, "-")
-			.replace(/-+/g, "-")
-			.replace(/^-|-$/g, "")
-	}
-
-	const handleTitleChange = (value: string) => {
-		setTitle(value)
-		// Only auto-generate slug if it hasn't been manually edited
-		if (!initialData?.slug) {
-			setSlug(generateSlug(value))
-		}
-	}
+	const [uploading, setUploading] = useState(false)
+	const [uploadedUrls, setUploadedUrls] = useState<string[]>([])
+	const [copied, setCopied] = useState<string | null>(null)
+	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
 		setSaving(true)
 		setError("")
-
 		try {
-			await onSubmit({
-				title,
-				slug,
-				description,
-				keywords: keywords
-					.split(",")
-					.map((k) => k.trim())
-					.filter(Boolean),
-				content,
-				coverImage,
-				status,
-			})
+			await onSubmit({ rawContent, status })
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to save post")
 		} finally {
@@ -103,181 +89,162 @@ export function PostEditor({
 		}
 	}
 
+	const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0]
+		if (!file) return
+		setUploading(true)
+		setError("")
+		try {
+			const formData = new FormData()
+			formData.append("file", file)
+			formData.append("directory", "blog")
+			const res = await fetch("/api/storage/upload", { method: "POST", body: formData })
+			if (!res.ok) {
+				const json = (await res.json()) as { error?: { message: string } }
+				throw new Error(json.error?.message ?? "Upload failed")
+			}
+			const json = (await res.json()) as { data: { url: string } }
+			setUploadedUrls((prev) => [...prev, json.data.url])
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Upload failed")
+		} finally {
+			setUploading(false)
+			if (fileInputRef.current) fileInputRef.current.value = ""
+		}
+	}
+
+	const copyMarkdown = (url: string) => {
+		void navigator.clipboard.writeText(`![image](${url})`)
+		setCopied(url)
+		setTimeout(() => setCopied(null), 2000)
+	}
+
 	return (
-		<form onSubmit={handleSubmit}>
+		<form onSubmit={handleSubmit} className="space-y-4">
 			{error && (
-				<div className="alert alert-error mb-4">
+				<div className="alert alert-error">
+					<i className="fa-solid fa-circle-exclamation" />
 					<span>{error}</span>
 				</div>
 			)}
 
-			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-				{/* Main content */}
-				<div className="lg:col-span-2 space-y-4">
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text">Title *</span>
-						</label>
-						<input
-							type="text"
-							className="input input-bordered"
-							value={title}
-							onChange={(e) => handleTitleChange(e.target.value)}
-							required
-						/>
-					</div>
-
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text">Slug *</span>
-						</label>
-						<input
-							type="text"
-							className="input input-bordered font-mono text-sm"
-							value={slug}
-							onChange={(e) => setSlug(e.target.value)}
-							required
-							pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
-						/>
-						<label className="label">
-							<span className="label-text-alt text-base-content/50">
-								URL: /blog/{slug || "..."}
-							</span>
-						</label>
-					</div>
-
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text">Content (Markdown) *</span>
-						</label>
-						<textarea
-							className="textarea textarea-bordered font-mono text-sm min-h-[400px]"
-							value={content}
-							onChange={(e) => setContent(e.target.value)}
-							required
-							placeholder="Write your blog post in Markdown..."
-						/>
-						<label className="label">
-							<span className="label-text-alt text-base-content/50">
-								Supports Markdown formatting. Use ## for headings, **bold**, *italic*, etc.
-							</span>
-						</label>
-					</div>
+			{/* Top bar: status + actions */}
+			<div className="flex items-center gap-3 flex-wrap">
+				<div className="flex items-center gap-2">
+					<span className="label-text text-sm font-medium">Status</span>
+					<Select
+						size="sm"
+						value={status}
+						onChange={(e) => setStatus(e.target.value as PostStatus)}
+						options={[
+							{ value: "DRAFT", label: "Draft" },
+							{ value: "PUBLISHED", label: "Published" },
+						]}
+					/>
 				</div>
+				<div className="flex gap-2 ml-auto">
+					{showDelete && onDelete && (
+						<Button
+							type="button"
+							onClick={handleDelete}
+							variant="error"
+							size="sm"
+							outline
+						>
+							<i className="fa-solid fa-trash" />
+							Delete
+						</Button>
+					)}
+					<ButtonLink href="/admin/blog" variant="ghost" size="sm">
+						Cancel
+					</ButtonLink>
+					<Button type="submit" variant="primary" size="sm" loading={saving}>
+						{submitLabel}
+					</Button>
+				</div>
+			</div>
 
-				{/* Sidebar / metadata */}
-				<div className="space-y-4">
-					{/* Actions */}
-					<div className="card bg-base-200">
-						<div className="card-body">
-							<h3 className="card-title text-sm">Publish</h3>
+			{/* Main textarea */}
+			<div className="form-control">
+				<textarea
+					className="textarea textarea-bordered font-mono text-sm w-full min-h-[70vh] resize-y leading-relaxed"
+					value={rawContent}
+					onChange={(e) => setRawContent(e.target.value)}
+					required
+					spellCheck={false}
+					placeholder={DEFAULT_POST_TEMPLATE}
+				/>
+				<label className="label">
+					<span className="label-text-alt text-base-content/50">
+						Frontmatter fields:{" "}
+						<code className="text-xs">title</code>,{" "}
+						<code className="text-xs">slug</code>,{" "}
+						<code className="text-xs">description</code>,{" "}
+						<code className="text-xs">keywords</code>,{" "}
+						<code className="text-xs">coverImage</code>
+						{" "}— followed by Markdown body.
+					</span>
+				</label>
+			</div>
 
-							<div className="form-control">
-								<label className="label">
-									<span className="label-text text-sm">Status</span>
-								</label>
-								<select
-									className="select select-bordered select-sm"
-									value={status}
-									onChange={(e) => setStatus(e.target.value as PostStatus)}
-								>
-									<option value="DRAFT">Draft</option>
-									<option value="PUBLISHED">Published</option>
-								</select>
-							</div>
+			{/* Image uploads */}
+			<div className="card bg-base-200">
+				<div className="card-body py-4">
+					<h3 className="font-semibold text-sm flex items-center gap-2">
+						<i className="fa-solid fa-image" />
+						Image Uploads
+					</h3>
 
-							<div className="flex gap-2 mt-3">
-								<button
-									type="submit"
-									className="btn btn-primary btn-sm flex-1"
-									disabled={saving}
-								>
-									{saving && <span className="loading loading-spinner loading-xs" />}
-									{submitLabel}
-								</button>
-								<Link href="/admin/blog" className="btn btn-ghost btn-sm">
-									Cancel
-								</Link>
-							</div>
-
-							{showDelete && onDelete && (
-								<button
-									type="button"
-									onClick={handleDelete}
-									className="btn btn-error btn-sm btn-outline mt-2 w-full"
-								>
-									<i className="fa-solid fa-trash mr-1" /> Delete Post
-								</button>
-							)}
+					{!postId ? (
+						<div className="alert alert-warning">
+							<i className="fa-solid fa-triangle-exclamation" />
+							<span>
+								Save the post first to enable image uploads. You can then reference
+								uploaded images in your markdown using{" "}
+								<code className="text-xs">![alt text](url)</code>.
+							</span>
 						</div>
-					</div>
-
-					{/* Description */}
-					<div className="card bg-base-200">
-						<div className="card-body">
-							<h3 className="card-title text-sm">SEO</h3>
-
-							<div className="form-control">
-								<label className="label">
-									<span className="label-text text-sm">Description</span>
-								</label>
-								<textarea
-									className="textarea textarea-bordered textarea-sm"
-									rows={3}
-									value={description}
-									onChange={(e) => setDescription(e.target.value)}
-									maxLength={500}
-									placeholder="Brief description for search engines..."
-								/>
-							</div>
-
-							<div className="form-control">
-								<label className="label">
-									<span className="label-text text-sm">Keywords</span>
-								</label>
+					) : (
+						<>
+							<div className="flex items-center gap-3">
 								<input
-									type="text"
-									className="input input-bordered input-sm"
-									value={keywords}
-									onChange={(e) => setKeywords(e.target.value)}
-									placeholder="keyword1, keyword2, keyword3"
+									ref={fileInputRef}
+									type="file"
+									accept="image/jpeg,image/png,image/webp,image/gif"
+									className="file-input file-input-bordered file-input-sm"
+									onChange={handleUpload}
+									disabled={uploading}
 								/>
-								<label className="label">
-									<span className="label-text-alt text-base-content/50">
-										Comma-separated
-									</span>
-								</label>
-							</div>
-						</div>
-					</div>
-
-					{/* Cover Image */}
-					<div className="card bg-base-200">
-						<div className="card-body">
-							<h3 className="card-title text-sm">Cover Image</h3>
-
-							<div className="form-control">
-								<input
-									type="url"
-									className="input input-bordered input-sm"
-									value={coverImage}
-									onChange={(e) => setCoverImage(e.target.value)}
-									placeholder="https://example.com/image.jpg"
-								/>
+								{uploading && <span className="loading loading-spinner loading-sm" />}
 							</div>
 
-							{coverImage && (
-								<div className="mt-2 aspect-video bg-base-300 rounded overflow-hidden">
-									{/* eslint-disable-next-line @next/next/no-img-element */}
-									<img
-										src={coverImage}
-										alt="Cover preview"
-										className="w-full h-full object-cover"
-									/>
+							{uploadedUrls.length > 0 && (
+								<div className="space-y-1 mt-2">
+									<p className="text-xs text-base-content/50">
+										Click an entry to copy the markdown snippet:
+									</p>
+									{uploadedUrls.map((url) => (
+									<Button
+										key={url}
+										type="button"
+										onClick={() => copyMarkdown(url)}
+										variant="ghost"
+										size="xs"
+										className="font-mono text-xs w-full justify-start truncate"
+										title="Copy markdown"
+									>
+										<i
+											className={`fa-solid ${
+												copied === url ? "fa-check text-success" : "fa-copy"
+											}`}
+										/>
+										![image]({url})
+									</Button>
+									))}
 								</div>
 							)}
-						</div>
-					</div>
+						</>
+					)}
 				</div>
 			</div>
 		</form>

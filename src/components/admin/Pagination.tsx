@@ -8,6 +8,7 @@
 "use client"
 
 import type { PaginationMeta } from "@/types/api"
+import { Button } from "@/components/ui"
 
 interface PaginationProps {
 	pagination: PaginationMeta
@@ -38,58 +39,63 @@ export function Pagination({ pagination, onPageChange }: PaginationProps) {
 			</p>
 
 			<div className="join">
-				<button
-					className="join-item btn btn-sm"
+				<Button
+					size="sm"
+					className="join-item"
 					disabled={!hasPrev}
 					onClick={() => onPageChange(1)}
 					aria-label="First page"
 				>
 					<i className="fa-solid fa-angles-left" />
-				</button>
-				<button
-					className="join-item btn btn-sm"
+				</Button>
+				<Button
+					size="sm"
+					className="join-item"
 					disabled={!hasPrev}
 					onClick={() => onPageChange(page - 1)}
 					aria-label="Previous page"
 				>
 					<i className="fa-solid fa-angle-left" />
-				</button>
+				</Button>
 
 				{start > 1 && (
-					<button className="join-item btn btn-sm btn-disabled">…</button>
+					<Button size="sm" className="join-item" disabled>…</Button>
 				)}
 
 				{pages.map((p) => (
-					<button
+					<Button
 						key={p}
-						className={`join-item btn btn-sm ${p === page ? "btn-active btn-primary" : ""
-							}`}
+						size="sm"
+						variant={p === page ? "primary" : undefined}
+						className={`join-item ${p === page ? "btn-active" : ""}`}
 						onClick={() => onPageChange(p)}
 					>
 						{p}
-					</button>
+					</Button>
 				))}
 
 				{end < totalPages && (
-					<button className="join-item btn btn-sm btn-disabled">…</button>
+					<Button size="sm" className="join-item" disabled>…</Button>
 				)}
 
-				<button
-					className="join-item btn btn-sm"
+				<Button
+					size="sm"
+					className="join-item"
 					disabled={!hasNext}
 					onClick={() => onPageChange(page + 1)}
 					aria-label="Next page"
 				>
 					<i className="fa-solid fa-angle-right" />
-				</button>
-				<button
-					className="join-item btn btn-sm"
+				</Button>
+				<Button
+					size="sm"
+					className="join-item"
 					disabled={!hasNext}
 					onClick={() => onPageChange(totalPages)}
 					aria-label="Last page"
 				>
 					<i className="fa-solid fa-angles-right" />
-				</button>
+				</Button>
 			</div>
 		</div>
 	)

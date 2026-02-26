@@ -8,7 +8,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
+import { Button, TextLink } from "@/components/ui"
 
 const COOKIE_CONSENT_KEY = "cookie-consent"
 
@@ -52,25 +52,19 @@ export function CookieBanner() {
 						We use cookies to improve your experience and analyze site usage.
 						By clicking &ldquo;Accept&rdquo;, you consent to our use of cookies.
 						See our{" "}
-						<Link href="/cookies" className="link link-primary">
+						<TextLink href="/cookies" variant="primary">
 							Cookie Policy
-						</Link>{" "}
+						</TextLink>{" "}
 						for details.
 					</p>
 				</div>
 				<div className="flex gap-2 shrink-0">
-					<button
-						onClick={handleReject}
-						className="btn btn-ghost btn-sm"
-					>
+					<Button variant="ghost" size="sm" onClick={handleReject}>
 						Reject
-					</button>
-					<button
-						onClick={handleAccept}
-						className="btn btn-primary btn-sm"
-					>
+					</Button>
+					<Button variant="primary" size="sm" onClick={handleAccept}>
 						Accept
-					</button>
+					</Button>
 				</div>
 			</div>
 		</div>

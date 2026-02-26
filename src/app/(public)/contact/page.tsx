@@ -2,6 +2,7 @@
  * Contact page at /contact.
  */
 
+import { Button, Input, Textarea, TextLink } from "@/components/ui"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -28,61 +29,14 @@ export default function ContactPage() {
 
 			<div className="container mx-auto px-4 py-16 max-w-xl">
 				<form className="space-y-6" action="/api/contact" method="POST">
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-semibold">Name</span>
-						</label>
-						<input
-							type="text"
-							name="name"
-							className="input input-bordered w-full input-lg"
-							placeholder="Your name"
-							required
-						/>
-					</div>
+					<Input label="Name" name="name" size="lg" placeholder="Your name" required />
+					<Input label="Email" name="email" type="email" size="lg" placeholder="you@example.com" required />
+					<Input label="Subject" name="subject" type="text" size="lg" placeholder="How can we help?" required />
+					<Textarea label="Message" name="message" placeholder="Tell us more about your inquiry..." rows={6} required className="text-lg" />
 
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-semibold">Email</span>
-						</label>
-						<input
-							type="email"
-							name="email"
-							className="input input-bordered w-full input-lg"
-							placeholder="you@example.com"
-							required
-						/>
-					</div>
-
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-semibold">Subject</span>
-						</label>
-						<input
-							type="text"
-							name="subject"
-							className="input input-bordered w-full input-lg"
-							placeholder="How can we help?"
-							required
-						/>
-					</div>
-
-					<div className="form-control">
-						<label className="label">
-							<span className="label-text font-semibold">Message</span>
-						</label>
-						<textarea
-							name="message"
-							className="textarea textarea-bordered w-full text-lg"
-							placeholder="Tell us more about your inquiry..."
-							rows={6}
-							required
-						/>
-					</div>
-
-					<button type="submit" className="btn btn-primary btn-block btn-lg">
+					<Button type="submit" variant="primary" modifier="block" size="lg">
 						Send Message
-					</button>
+					</Button>
 				</form>
 
 				<div className="divider my-16">OR</div>
@@ -91,12 +45,14 @@ export default function ContactPage() {
 					<p className="text-base-content/70">
 						Prefer direct email? Reach us at:
 					</p>
-					<a
+					<TextLink
 						href="mailto:support@example.com"
-						className="text-2xl font-bold link link-primary no-underline hover:underline"
+						variant="primary"
+						external
+						className="text-2xl font-bold no-underline hover:underline"
 					>
 						support@example.com
-					</a>
+					</TextLink>
 				</div>
 			</div>
 		</div>
