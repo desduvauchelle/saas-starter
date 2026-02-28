@@ -1,7 +1,15 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+	serverExternalPackages: [
+		"@prisma/client",
+		"prisma",
+		"bcryptjs",
+		"sharp",
+		"@aws-sdk/client-s3",
+		"@aws-sdk/s3-request-presigner",
+		"@node-rs/argon2",
+	],
+}
 
-export default nextConfig;
+export default nextConfig

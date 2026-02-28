@@ -1,5 +1,5 @@
 /**
- * Middleware for route protection.
+ * Proxy for route protection.
  *
  * Protects:
  *  - /app/* (authenticated users only)
@@ -8,7 +8,7 @@
  * Redirects unauthenticated users to /login.
  * Redirects non-admin users to /dashboard.
  *
- * Uses NextAuth's `auth` wrapper for middleware.
+ * Uses NextAuth's `auth` wrapper for proxy.
  */
 
 import { NextResponse } from "next/server"

@@ -4,7 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev --turbopack",
-		"build": "next build",
+		"build": "prisma generate && next build --webpack",
+		"postinstall": "prisma generate",
 		"start": "next start",
 		"lint": "next lint",
 		"typecheck": "tsc --noEmit",
@@ -85,7 +86,7 @@
 		"@vitest/coverage-v8": "^4.0.18",
 		"@vitest/ui": "^4.0.18",
 		"daisyui": "^5.5.19",
-		"eslint": "^10",
+		"eslint": "^9",
 		"eslint-config-next": "16.1.6",
 		"jsdom": "^28.1.0",
 		"msw": "^2.12.10",

@@ -35,6 +35,8 @@ npm install
 
 # Set up environment variables
 cp .env.example .env
+# Generate auth secret
+openssl rand -base64 32
 # Edit .env with your values (see Environment Variables below)
 
 # Set up database
@@ -56,7 +58,7 @@ Create a `.env` file in the project root. All variables are validated at startup
 | Variable | Description |
 |----------|-------------|
 | `DATABASE_URL` | PostgreSQL connection string (e.g. `postgresql://user:pass@localhost:5432/mydb`) |
-| `NEXTAUTH_SECRET` | Random secret for JWT signing. Generate with `openssl rand -base64 32` |
+| `NEXTAUTH_SECRET` | Random secret for JWT signing (run `openssl rand -base64 32` and paste the output) |
 | `NEXTAUTH_URL` | Canonical URL of the app (e.g. `http://localhost:3000`) |
 
 ### OAuth Providers (optional — presence enables the provider)

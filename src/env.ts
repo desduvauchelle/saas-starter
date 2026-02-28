@@ -154,7 +154,7 @@ interface EnvVarInfo {
 
 const ENV_VARS: EnvVarInfo[] = [
 	{ name: "DATABASE_URL", group: "DATABASE", required: true, description: "PostgreSQL connection string" },
-	{ name: "NEXTAUTH_SECRET", group: "AUTH", required: true, description: "JWT signing secret" },
+	{ name: "NEXTAUTH_SECRET", group: "AUTH", required: true, description: "JWT signing secret (openssl rand -base64 32)" },
 	{ name: "NEXTAUTH_URL", group: "AUTH", required: true, description: "Canonical app URL" },
 	{ name: "GOOGLE_CLIENT_ID", group: "OAUTH", required: false, description: "Google OAuth client ID" },
 	{ name: "GOOGLE_CLIENT_SECRET", group: "OAUTH", required: false, description: "Google OAuth client secret" },
