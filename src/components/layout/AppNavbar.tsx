@@ -50,7 +50,7 @@ export function AppNavbar({ user }: AppNavbarProps) {
 								<img src={user.image} alt={user.name ?? "Avatar"} />
 							</div>
 						) : (
-							<div className="bg-primary text-primary-content w-10 rounded-full">
+							<div className="bg-primary text-primary-content w-10 rounded-full flex items-center justify-center font-medium">
 								<span>{initials}</span>
 							</div>
 						)}
